@@ -330,14 +330,17 @@ header nav a{transition:color .25s ease,box-shadow .25s ease;padding-bottom:4px}
     if(link){ link.style.color='#F47F20'; link.style.boxShadow='0 2px 0 0 #F47F20'; }
   }
   function easeInOutCubic(t){ return t<0.5 ? 4*t*t*t : 1-Math.pow(-2*t+2,3)/2; }
+  var autoScrolling = false;
   function smoothScrollTo(targetY, duration){
     var startY = window.pageYOffset;
     var diff = targetY - startY;
     var startTime = Date.now();
+    autoScrolling = true;
     function step(){
       var progress = Math.min((Date.now()-startTime)/duration, 1);
       window.scrollTo(0, startY + diff*easeInOutCubic(progress));
       if(progress<1){ setTimeout(step,16); }
+      else { autoScrolling = false; }
     }
     step();
   }
@@ -372,7 +375,7 @@ header nav a{transition:color .25s ease,box-shadow .25s ease;padding-bottom:4px}
   var sections = ['sheet','calls','run','terms'].map(function(id){ return document.getElementById(id); }).filter(Boolean);
   var ticking = false;
   function onScroll(){
-    if(ticking) return;
+    if(ticking || autoScrolling) return;
     ticking = true;
     setTimeout(function(){
       var headerH = document.querySelector('header').offsetHeight;
