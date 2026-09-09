@@ -14,7 +14,7 @@ h1,h2,h3,p{margin:0}
 @keyframes logos{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 .hero-photo{object-position:center 15%}
 @media(max-width:640px){.hero-photo{object-position:32% 15%}}
-.lang-btn{cursor:pointer;background:none;border:none;padding:0;font:inherit;letter-spacing:inherit}
+.lang-btn{cursor:pointer;border:none;font:inherit;letter-spacing:inherit;border-radius:16px;transition:background .2s ease,color .2s ease}
 header nav a{transition:color .25s ease;padding-bottom:4px}
 #navIndicator{position:absolute;left:0;width:0;bottom:-8px;height:2px;background:#F47F20;opacity:0;transition:left .35s cubic-bezier(.65,0,.35,1),width .35s cubic-bezier(.65,0,.35,1),opacity .25s ease}
 @keyframes sectionPulse{0%{box-shadow:inset 0 0 0 0 rgba(244,127,32,0)}30%{box-shadow:inset 0 14px 28px -14px rgba(244,127,32,.65)}100%{box-shadow:inset 0 0 0 0 rgba(244,127,32,0)}}
@@ -33,6 +33,12 @@ header nav a{transition:color .25s ease;padding-bottom:4px}
 .cta-btn{transition:transform .2s ease,box-shadow .2s ease;display:inline-block}
 .cta-btn:hover{transform:translateY(-2px) scale(1.02);box-shadow:0 10px 24px -8px rgba(0,0,0,.5)}
 .hover-card:hover{transform:translateY(-6px)}
+.reveal-left{transform:translateX(-28px)}
+.reveal-left.in-view{transform:translateX(0)}
+.reveal-scale{transform:scale(.92)}
+.reveal-scale.in-view{transform:scale(1)}
+.reveal-blur{transition:opacity .7s ease,transform .7s ease,filter .8s ease;filter:blur(8px);transform:scale(1.03)}
+.reveal-blur.in-view{filter:blur(0);transform:scale(1)}
 .calls-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:52px}
 @media(max-width:760px){.calls-grid{grid-template-columns:1fr;gap:8px}}
 .calls-list-item{border-top:1px solid rgba(255,255,255,.2);padding:22px 0;display:flex;gap:18px;align-items:flex-start}
@@ -84,7 +90,7 @@ body.loaded .hero-anim{animation-play-state:running}
     <a href="#" style="display:flex;align-items:center">
       <img id="headerLogo" src="./assets/logo-troopers-white.png" alt="TROOPERS" style="height:22px;display:block">
     </a>
-    <nav id="siteNav" style="position:relative;display:flex;gap:20px;font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;flex-wrap:wrap">
+    <nav id="siteNav" style="position:relative;display:flex;gap:20px;font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;flex-wrap:wrap">
       <a href="#sheet" style="color:rgba(255,255,255,.7)" data-ms="Senarai jawatan">Call sheet</a>
       <a href="#calls" style="color:rgba(255,255,255,.7)" data-ms="Sebab mereka hubungi">Why they call</a>
       <a href="#run" style="color:rgba(255,255,255,.7)" data-ms="Cara kami uruskan">How we run it</a>
@@ -92,9 +98,9 @@ body.loaded .hero-anim{animation-play-state:running}
       <span id="navIndicator"></span>
     </nav>
     <div style="margin-left:auto;display:flex;align-items:center;gap:14px">
-      <div style="display:flex;gap:8px;font-size:11px;font-weight:700;letter-spacing:.14em">
-        <button class="lang-btn" data-lang="ms" style="color:rgba(255,255,255,.62)">MS</button>
-        <button class="lang-btn" data-lang="en" style="color:#F47F20;border-bottom:2px solid #F47F20">EN</button>
+      <div style="display:flex;gap:2px;background:rgba(255,255,255,.08);border-radius:20px;padding:3px;font-size:11px;font-weight:700;letter-spacing:.08em">
+        <button class="lang-btn" data-lang="ms" style="padding:5px 11px;background:transparent;color:rgba(255,255,255,.6)">MS</button>
+        <button class="lang-btn" data-lang="en" style="padding:5px 11px;background:#F47F20;color:#131249">EN</button>
       </div>
       <a href="https://troopersapp.com/employer-signup" target="_blank" rel="noopener" class="cta-btn" style="padding:12px 20px;background:#F47F20;color:#131249;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap" data-ms="Cipta akaun">Create an account</a>
     </div>
@@ -105,7 +111,7 @@ body.loaded .hero-anim{animation-play-state:running}
   <img src="./assets/role-waiter.png" alt="F&amp;B staff carrying trays" class="hero-photo hero-anim" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;animation:heroPhotoIn .9s cubic-bezier(.16,.84,.44,1) both">
   <div style="position:absolute;inset:0;background:linear-gradient(105deg,#131249 22%,rgba(19,18,73,.7) 36%,rgba(19,18,73,.28) 58%,rgba(19,18,73,.12) 100%)"></div>
   <div style="position:relative;max-width:1400px;margin:0 auto;padding:74px 26px 84px">
-    <div class="hero-anim" style="font-size:11px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:#F47F20;animation:heroUp .45s cubic-bezier(.16,.84,.44,1) both;animation-delay:.03s" data-ms="Pekerja separuh masa F&amp;B · Malaysia">F&amp;B part-timers · Malaysia</div>
+    <div class="hero-anim" style="font-size:11px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:#F47F20;animation:heroUp .45s cubic-bezier(.16,.84,.44,1) both;animation-delay:.03s" data-ms="Majikan F&amp;B · Malaysia">F&amp;B Employers · Malaysia</div>
     <h1 style="margin-top:20px;max-width:16em">
       <span class="hero-anim" style="display:block;font-size:clamp(46px,8.4vw,124px);line-height:.86;font-weight:700;letter-spacing:-.05em;animation:heroUp .45s cubic-bezier(.16,.84,.44,1) both;animation-delay:.09s" data-ms="Kekurangan">Short-staffed</span>
       <span class="hero-anim" style="display:block;font-size:clamp(46px,8.4vw,124px);line-height:.86;font-weight:700;letter-spacing:-.05em;color:transparent;-webkit-text-stroke:2px #F47F20;animation:heroUp .45s cubic-bezier(.16,.84,.44,1) both;animation-delay:.16s" data-ms="staf malam ini?">tonight?</span>
@@ -180,7 +186,7 @@ body.loaded .hero-anim{animation-play-state:running}
     <div class="sheet-cell reveal" style="padding:16px 0;border-top:1px solid rgba(255,255,255,.16)"><div style="font-size:clamp(20px,2.4vw,30px);font-weight:700;letter-spacing:-.03em;line-height:1.1">Barista</div><div style="font-size:13px;color:rgba(255,255,255,.55);margin-top:3px" data-ms="Bar espreso, penyediaan minuman, POS">Espresso bar, drink assembly, POS</div></div>
     <div class="sheet-cell reveal" style="padding:16px 0;border-top:1px solid rgba(255,255,255,.16);text-align:right"><span style="font-size:10.5px;font-weight:700;letter-spacing:.1em;padding:5px 9px;border:1px solid rgba(255,255,255,.62);color:rgba(255,255,255,.85);white-space:nowrap" data-ms="ANDA TENTUKAN">YOU DECIDE</span></div>
 
-    <div class="sheet-cell reveal" style="padding:16px 0;border-top:1px solid rgba(255,255,255,.16)"><img src="./assets/role-cashier.png" alt="Cashier at the counter" style="width:62px;height:62px;object-fit:cover;object-position:35% 30%;display:block"></div>
+    <div class="sheet-cell reveal" style="padding:16px 0;border-top:1px solid rgba(255,255,255,.16)"><img src="./assets/role-cashier.png" alt="Cashier at the counter" style="width:62px;height:62px;object-fit:cover;object-position:50% 38%;display:block"></div>
     <div class="sheet-cell reveal" style="padding:16px 0;border-top:1px solid rgba(255,255,255,.16)"><div style="font-size:clamp(20px,2.4vw,30px);font-weight:700;letter-spacing:-.03em;line-height:1.1" data-ms="Juruwang">Cashier</div><div style="font-size:13px;color:rgba(255,255,255,.55);margin-top:3px" data-ms="POS, pembayaran, kawalan barisan">POS, payments, queue control</div></div>
     <div class="sheet-cell reveal" style="padding:16px 0;border-top:1px solid rgba(255,255,255,.16);text-align:right"><span style="font-size:10.5px;font-weight:700;letter-spacing:.1em;padding:5px 9px;border:1px solid rgba(255,255,255,.62);color:rgba(255,255,255,.85);white-space:nowrap" data-ms="ANDA TENTUKAN">YOU DECIDE</span></div>
 
@@ -266,22 +272,22 @@ body.loaded .hero-anim{animation-play-state:running}
     </div>
     <h2 style="font-size:clamp(36px,6vw,84px);font-weight:700;letter-spacing:-.05em;line-height:.9;max-width:15em" data-ms="Anda siarkan kerja.<br>Kami uruskan platform.">You post the job.<br>We run the platform.</h2>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:28px;margin-top:44px">
-      <div class="reveal hover-card" style="border-top:4px solid #131249;padding-top:16px">
+      <div class="reveal hover-card reveal-left" style="border-top:4px solid #131249;padding-top:16px">
         <div style="font-size:10.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;opacity:.65" data-ms="Langkah 01">Step 01</div>
         <div style="font-size:23px;font-weight:700;letter-spacing:-.025em;margin-top:9px" data-ms="Siarkan kerja">Post the job</div>
         <p style="font-size:14px;line-height:1.55;margin-top:6px;opacity:.8" data-ms="Outlet, peranan, tarikh, waktu, bilangan pekerja dan kadar anda.">Outlet, role, date, hours, headcount and your rate.</p>
       </div>
-      <div class="reveal hover-card" style="border-top:4px solid #131249;padding-top:16px">
+      <div class="reveal hover-card reveal-left" style="border-top:4px solid #131249;padding-top:16px">
         <div style="font-size:10.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;opacity:.65" data-ms="Langkah 02">Step 02</div>
         <div style="font-size:23px;font-weight:700;letter-spacing:-.025em;margin-top:9px" data-ms="Mereka memohon">They apply</div>
         <p style="font-size:14px;line-height:1.55;margin-top:6px;opacity:.8" data-ms="Pekerja separuh masa disahkan memohon terus. Upah pilihan anda dalam satu klik.">Vetted part-timers apply directly. Hire favourites in one click.</p>
       </div>
-      <div class="reveal hover-card" style="border-top:4px solid #131249;padding-top:16px">
+      <div class="reveal hover-card reveal-left" style="border-top:4px solid #131249;padding-top:16px">
         <div style="font-size:10.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;opacity:.65" data-ms="Langkah 03">Step 03</div>
         <div style="font-size:23px;font-weight:700;letter-spacing:-.025em;margin-top:9px" data-ms="Mereka daftar masuk">They check in</div>
         <p style="font-size:14px;line-height:1.55;margin-top:6px;opacity:.8" data-ms="Daftar masuk bertanda geo dengan gambar. Laporan kehadiran automatik.">Geo-tagged check-in with photo. Attendance reports are automatic.</p>
       </div>
-      <div class="reveal hover-card" style="border-top:4px solid #131249;padding-top:16px">
+      <div class="reveal hover-card reveal-left" style="border-top:4px solid #131249;padding-top:16px">
         <div style="font-size:10.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;opacity:.65" data-ms="Langkah 04">Step 04</div>
         <div style="font-size:23px;font-weight:700;letter-spacing:-.025em;margin-top:9px" data-ms="Kredit ditolak">Credits deduct</div>
         <p style="font-size:14px;line-height:1.55;margin-top:6px;opacity:.8" data-ms="Selepas syif tamat, kredit ditolak secara automatik. Kontrak dan pembayaran kepada pekerja separuh masa diuruskan untuk anda.">After the shift ends, credits auto-deduct. Contracts and payment to the part-timer are handled for you.</p>
@@ -307,13 +313,13 @@ body.loaded .hero-anim{animation-play-state:running}
       <p style="font-size:14.5px;line-height:1.6;color:rgba(255,255,255,.7);margin-top:12px;max-width:32em" data-ms="Tambah 8% SST. Pendapatan pekerja separuh masa dibayar tambahan pada kadar yang anda tetapkan. Satu syif bermaksud satu pekerja separuh masa untuk satu kerja pada waktu yang dipersetujui — lima orang untuk acara sehari bermaksud lima syif.">Plus 8% SST. Part-timers' earnings are paid on top at the rate you set. One shift means one part-timer on one job for the agreed hours — five people for a one-day event is five shifts.</p>
     </div>
     <div style="flex:1 1 320px;min-width:0;display:flex;flex-direction:column;gap:10px;font-size:14.5px;color:rgba(255,255,255,.75)">
-      <div class="reveal" style="border-top:1px solid rgba(255,255,255,.18);padding-top:11px" data-ms="Portal percuma yang anda urus sendiri untuk siaran kerja dan pemohon, pada kadar anda sendiri">Free self-managed portal for your job posts and applicants, at your own rates</div>
-      <div class="reveal" style="border-top:1px solid rgba(255,255,255,.18);padding-top:11px" data-ms="Pekerja separuh masa memohon terus; upah pilihan anda dalam satu klik">Part-timers apply directly; hire favourites in one click</div>
-      <div class="reveal" style="border-top:1px solid rgba(255,255,255,.18);padding-top:11px" data-ms="Tambah nilai melalui Visa, Mastercard atau FPX; kredit ditolak automatik setiap syif">Top up by Visa, Mastercard or FPX; credits auto-deduct per shift</div>
-      <div class="reveal" style="border-top:1px solid rgba(255,255,255,.18);padding-top:11px" data-ms="Daftar masuk bertanda geo dengan gambar dan laporan kehadiran automatik">Geo-tagged check-in with photo and automated attendance reports</div>
-      <div class="reveal" style="border-top:1px solid rgba(255,255,255,.18);padding-top:11px" data-ms="Kontrak dan pembayaran pekerja separuh masa diuruskan untuk anda">Part-timer contracts and payments handled for you</div>
-      <div class="reveal" style="border-top:1px solid rgba(255,255,255,.18);padding-top:11px" data-ms="Sokongan melalui WhatsApp atau e-mel">Support on WhatsApp or email</div>
-      <div class="reveal" style="border-top:1px solid rgba(255,255,255,.18);padding-top:11px;color:rgba(255,255,255,.62)" data-ms="Nilai pesanan minimum RM 5,000 jumlah yuran perkhidmatan bulanan. Pembatalan dalam masa 48 jam dikenakan caj 50%.">Minimum order value RM 5,000 in total monthly service fee. Cancellations under 48 hours are charged at 50%.</div>
+      <div class="reveal reveal-scale" style="border-top:1px solid rgba(255,255,255,.18);padding-top:11px" data-ms="Portal percuma yang anda urus sendiri untuk siaran kerja dan pemohon, pada kadar anda sendiri">Free self-managed portal for your job posts and applicants, at your own rates</div>
+      <div class="reveal reveal-scale" style="border-top:1px solid rgba(255,255,255,.18);padding-top:11px" data-ms="Pekerja separuh masa memohon terus; upah pilihan anda dalam satu klik">Part-timers apply directly; hire favourites in one click</div>
+      <div class="reveal reveal-scale" style="border-top:1px solid rgba(255,255,255,.18);padding-top:11px" data-ms="Tambah nilai melalui Visa, Mastercard atau FPX; kredit ditolak automatik setiap syif">Top up by Visa, Mastercard or FPX; credits auto-deduct per shift</div>
+      <div class="reveal reveal-scale" style="border-top:1px solid rgba(255,255,255,.18);padding-top:11px" data-ms="Daftar masuk bertanda geo dengan gambar dan laporan kehadiran automatik">Geo-tagged check-in with photo and automated attendance reports</div>
+      <div class="reveal reveal-scale" style="border-top:1px solid rgba(255,255,255,.18);padding-top:11px" data-ms="Kontrak dan pembayaran pekerja separuh masa diuruskan untuk anda">Part-timer contracts and payments handled for you</div>
+      <div class="reveal reveal-scale" style="border-top:1px solid rgba(255,255,255,.18);padding-top:11px" data-ms="Sokongan melalui WhatsApp atau e-mel">Support on WhatsApp or email</div>
+      <div class="reveal reveal-scale" style="border-top:1px solid rgba(255,255,255,.18);padding-top:11px;color:rgba(255,255,255,.62)" data-ms="Nilai pesanan minimum RM 5,000 jumlah yuran perkhidmatan bulanan. Pembatalan dalam masa 48 jam dikenakan caj 50%.">Minimum order value RM 5,000 in total monthly service fee. Cancellations under 48 hours are charged at 50%.</div>
     </div>
   </div>
 </section>
@@ -327,13 +333,15 @@ body.loaded .hero-anim{animation-play-state:running}
       <p style="font-size:15.5px;line-height:1.6;color:rgba(255,255,255,.7);margin-top:16px;max-width:28em" data-ms="Siarkan kerja pada kadar anda dan pekerja separuh masa disahkan akan memohon. Anda sahkan siapa yang bekerja.">Post the job at your rate and vetted part-timers apply. You confirm who works.</p>
       <a href="https://troopersapp.com/employer-signup" target="_blank" rel="noopener" class="cta-btn" style="display:inline-block;margin-top:26px;padding:20px 34px;background:#F47F20;color:#131249;font-size:14px;font-weight:700;letter-spacing:.09em;text-transform:uppercase" data-ms="Cipta akaun">Create an account</a>
     </div>
-    <div class="reveal" style="flex:1 1 280px;min-width:0;background:rgba(19,18,73,.6);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.15);padding:24px 26px">
+    <div class="reveal reveal-blur" style="flex:1 1 280px;min-width:0;background:rgba(19,18,73,.6);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.15);padding:24px 26px">
       <div style="font-size:10.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.62)" data-ms="Cara ia berfungsi">How it works</div>
       <div style="display:flex;flex-direction:column;margin-top:14px">
-        <div style="display:flex;gap:14px;border-top:1px solid rgba(255,255,255,.18);padding:14px 0"><span style="font-size:15px;font-weight:700;color:#F47F20;flex:none">01</span><span style="font-size:15px;line-height:1.5" data-ms="Cipta akaun percuma">Create a free account</span></div>
-        <div style="display:flex;gap:14px;border-top:1px solid rgba(255,255,255,.18);padding:14px 0"><span style="font-size:15px;font-weight:700;color:#F47F20;flex:none">02</span><span style="font-size:15px;line-height:1.5" data-ms="Prabayar kredit">Prepay credits</span></div>
-        <div style="display:flex;gap:14px;border-top:1px solid rgba(255,255,255,.18);padding:14px 0"><span style="font-size:15px;font-weight:700;color:#F47F20;flex:none">03</span><span style="font-size:15px;line-height:1.5" data-ms="Siarkan kerja dan upah pekerja separuh masa bila-bila masa anda perlukan">Post jobs and hire part-timers whenever you need</span></div>
-        <div style="display:flex;gap:14px;border-top:1px solid rgba(255,255,255,.18);border-bottom:1px solid rgba(255,255,255,.18);padding:14px 0"><span style="font-size:15px;font-weight:700;color:#F47F20;flex:none">04</span><span style="font-size:15px;line-height:1.5" data-ms="Anda hanya dikenakan caj selepas kerja selesai">You're only charged once the job is done</span></div>
+        <div style="display:flex;gap:14px;border-top:1px solid rgba(255,255,255,.18);padding:14px 0"><span style="font-size:15px;font-weight:700;color:#F47F20;flex:none">01</span><span style="font-size:15px;line-height:1.5" data-ms="Cipta akaun percuma melalui https://troopersapp.com/employer-signup">Create a free account via https://troopersapp.com/employer-signup</span></div>
+        <div style="display:flex;gap:14px;border-top:1px solid rgba(255,255,255,.18);padding:14px 0"><span style="font-size:15px;font-weight:700;color:#F47F20;flex:none">02</span><span style="font-size:15px;line-height:1.5" data-ms="Muat naik dokumen SSM anda">Upload your SSM documents</span></div>
+        <div style="display:flex;gap:14px;border-top:1px solid rgba(255,255,255,.18);padding:14px 0"><span style="font-size:15px;font-weight:700;color:#F47F20;flex:none">03</span><span style="font-size:15px;line-height:1.5" data-ms="Prabayar kredit">Prepay credits</span></div>
+        <div style="display:flex;gap:14px;border-top:1px solid rgba(255,255,255,.18);padding:14px 0"><span style="font-size:15px;font-weight:700;color:#F47F20;flex:none">04</span><span style="font-size:15px;line-height:1.5" data-ms="Hantar siaran kerja; pasukan kami akan menyemaknya dalam masa 3 hari bekerja">Submit a job post, a member of our team will review it within 3 business days</span></div>
+        <div style="display:flex;gap:14px;border-top:1px solid rgba(255,255,255,.18);padding:14px 0"><span style="font-size:15px;font-weight:700;color:#F47F20;flex:none">05</span><span style="font-size:15px;line-height:1.5" data-ms="Setelah diluluskan, anda boleh berbual dan mengupah pekerja separuh masa mengikut jadual anda sendiri di platform">Once approved, you'll be able to chat and hire part-timers on your own schedule on the platform</span></div>
+        <div style="display:flex;gap:14px;border-top:1px solid rgba(255,255,255,.18);border-bottom:1px solid rgba(255,255,255,.18);padding:14px 0"><span style="font-size:15px;font-weight:700;color:#F47F20;flex:none">06</span><span style="font-size:15px;line-height:1.5" data-ms="Anda hanya dikenakan caj selepas kerja selesai">You're only charged once the job is done</span></div>
       </div>
     </div>
   </div>
@@ -377,8 +385,8 @@ body.loaded .hero-anim{animation-play-state:running}
     els.forEach(function(el){ el.innerHTML = lang==='ms' ? el.dataset.ms : el.dataset.en; });
     btns.forEach(function(b){
       var active = b.dataset.lang===lang;
-      b.style.color = active ? '#F47F20' : 'rgba(255,255,255,.62)';
-      b.style.borderBottom = active ? '2px solid #F47F20' : 'none';
+      b.style.background = active ? '#F47F20' : 'transparent';
+      b.style.color = active ? '#131249' : 'rgba(255,255,255,.6)';
     });
     document.documentElement.lang = lang==='ms' ? 'ms' : 'en';
     try{ localStorage.setItem(KEY, lang); }catch(e){}
