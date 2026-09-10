@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script>if('scrollRestoration' in history){ history.scrollRestoration = 'manual'; } window.scrollTo(0,0);</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>TROOPERS — F&amp;B Staffing</title>
@@ -535,7 +536,7 @@ body.loaded .hero-anim{animation-play-state:running}
           io.unobserve(entry.target);
         }
       });
-    }, {threshold:0.15});
+    }, {rootMargin:'0px 0px -30% 0px', threshold:0.01});
     groups.forEach(function(g){ io.observe(g); });
   } else {
     groups.forEach(revealGroup);
