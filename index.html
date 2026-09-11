@@ -7,7 +7,7 @@
 <title>TROOPERS — F&amp;B Staffing</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"><style>
 body{margin:0;background:#131249;font-family:'Poppins',system-ui,sans-serif;color:#fff;-webkit-font-smoothing:antialiased}
-#sheet,#calls,#run,#terms{scroll-margin-top:76px}
+#sheet,#calls{scroll-margin-top:76px}
 a{color:#F47F20;text-decoration:none}
 .footer-link{color:inherit;transition:color .2s ease}
 .footer-link:hover{color:#F47F20}
@@ -36,10 +36,6 @@ header nav a{transition:color .25s ease;padding-bottom:4px}
 .cta-btn{transition:transform .2s ease,box-shadow .2s ease;display:inline-block}
 .cta-btn:hover{transform:translateY(-2px) scale(1.02);box-shadow:0 10px 24px -8px rgba(0,0,0,.5)}
 .hover-card:hover{transform:translateY(-6px)}
-.reveal-left{transform:translateX(-28px)}
-.reveal-left.in-view{transform:translateX(0)}
-.reveal-scale{transform:scale(.92)}
-.reveal-scale.in-view{transform:scale(1)}
 .reveal-blur{transition:opacity .7s ease,transform .7s ease,filter .8s ease;filter:blur(8px);transform:scale(1.03)}
 .reveal-blur.in-view{filter:blur(0);transform:scale(1)}
 .calls-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:52px}
@@ -96,8 +92,6 @@ body.loaded .hero-anim{animation-play-state:running}
     <nav id="siteNav" style="position:relative;display:flex;gap:20px;font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;flex-wrap:wrap">
       <a href="#sheet" style="color:rgba(255,255,255,.7)" data-ms="Senarai jawatan">Call sheet</a>
       <a href="#calls" style="color:rgba(255,255,255,.7)" data-ms="Sebab mereka hubungi">Why they call</a>
-      <a href="#run" style="color:rgba(255,255,255,.7)" data-ms="Cara kami uruskan">How we run it</a>
-      <a href="#terms" style="color:rgba(255,255,255,.7)" data-ms="Harga">Pricing</a>
       <span id="navIndicator"></span>
     </nav>
     <div style="margin-left:auto;display:flex;align-items:center;gap:14px">
@@ -172,38 +166,30 @@ body.loaded .hero-anim{animation-play-state:running}
     <p style="font-size:13px;line-height:1.6;color:rgba(255,255,255,.6);max-width:26em;margin-left:auto" data-ms="Jawatan yang tersedia di platform. Anda tetapkan kadar dan bilangan pekerja; pekerja separuh masa memohon kerja anda dan anda mengesahkan siapa yang bekerja.">Positions available on the platform. You set the rate and the headcount; part-timers apply to your job and you confirm who works.</p>
   </div>
 
-  <div style="display:grid;grid-template-columns:auto 1fr auto;column-gap:20px;align-items:center;margin-top:8px">
+  <div style="display:grid;grid-template-columns:auto 1fr;column-gap:20px;align-items:center;margin-top:8px">
     <div style="padding:16px 0 12px;font-size:10.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.62)"></div>
     <div style="padding:16px 0 12px;font-size:10.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.62)" data-ms="Jawatan">Position</div>
-    <div style="padding:16px 0 12px;font-size:10.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.62);text-align:right">FHC</div>
 
     <div class="sheet-cell reveal" style="padding:16px 0;border-top:1px solid rgba(255,255,255,.16)"><img src="./assets/case-fine-dining.png" alt="Service crew member greeting a guest" style="width:62px;height:62px;border-radius:12px;object-fit:cover;object-position:45% 16%;display:block"></div>
     <div class="sheet-cell reveal" style="padding:16px 0;border-top:1px solid rgba(255,255,255,.16)"><div style="font-size:clamp(20px,2.4vw,30px);font-weight:700;letter-spacing:-.03em;line-height:1.1" data-ms="Krew Perkhidmatan">Service Crew</div><div style="font-size:13px;color:rgba(255,255,255,.55);margin-top:3px" data-ms="Perkhidmatan lantai, pengambilan pesanan, pusing meja, sokongan am">Floor service, order taking, table turnover, general support</div></div>
-    <div class="sheet-cell reveal" style="padding:16px 0;border-top:1px solid rgba(255,255,255,.16);text-align:right"><span style="font-size:10.5px;font-weight:700;letter-spacing:.1em;padding:5px 9px;border:1px solid rgba(255,255,255,.62);color:rgba(255,255,255,.85);white-space:nowrap" data-ms="ANDA TENTUKAN">YOU DECIDE</span></div>
 
     <div class="sheet-cell reveal" style="padding:16px 0;border-top:1px solid rgba(255,255,255,.16)"><div style="width:62px;height:62px;border-radius:12px;border:1px dashed rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:9px;letter-spacing:.1em;text-align:center;color:rgba(255,255,255,.62);line-height:1.3" data-ms="GAMBAR<br>DIPERLUKAN">PHOTO<br>NEEDED</div></div>
     <div class="sheet-cell reveal" style="padding:16px 0;border-top:1px solid rgba(255,255,255,.16)"><div style="font-size:clamp(20px,2.4vw,30px);font-weight:700;letter-spacing:-.03em;line-height:1.1" data-ms="Krew Dapur">Kitchen Crew</div><div style="font-size:13px;color:rgba(255,255,255,.55);margin-top:3px" data-ms="Penyediaan, sokongan pempingganan, basuh pinggan, penutupan">Prep, plating support, dishwashing, closing</div></div>
-    <div class="sheet-cell reveal" style="padding:16px 0;border-top:1px solid rgba(255,255,255,.16);text-align:right"><span style="font-size:10.5px;font-weight:700;letter-spacing:.1em;padding:5px 9px;border:1px solid rgba(255,255,255,.62);color:rgba(255,255,255,.85);white-space:nowrap" data-ms="ANDA TENTUKAN">YOU DECIDE</span></div>
 
     <div class="sheet-cell reveal" style="padding:16px 0;border-top:1px solid rgba(255,255,255,.16)"><img src="./assets/role-barista.png" alt="Barista at the espresso machine" style="width:62px;height:62px;border-radius:12px;object-fit:cover;object-position:48% 22%;display:block"></div>
     <div class="sheet-cell reveal" style="padding:16px 0;border-top:1px solid rgba(255,255,255,.16)"><div style="font-size:clamp(20px,2.4vw,30px);font-weight:700;letter-spacing:-.03em;line-height:1.1">Barista</div><div style="font-size:13px;color:rgba(255,255,255,.55);margin-top:3px" data-ms="Bar espreso, penyediaan minuman, POS">Espresso bar, drink assembly, POS</div></div>
-    <div class="sheet-cell reveal" style="padding:16px 0;border-top:1px solid rgba(255,255,255,.16);text-align:right"><span style="font-size:10.5px;font-weight:700;letter-spacing:.1em;padding:5px 9px;border:1px solid rgba(255,255,255,.62);color:rgba(255,255,255,.85);white-space:nowrap" data-ms="ANDA TENTUKAN">YOU DECIDE</span></div>
 
     <div class="sheet-cell reveal" style="padding:16px 0;border-top:1px solid rgba(255,255,255,.16)"><div style="width:62px;height:62px;border-radius:12px;overflow:hidden"><img src="./assets/role-cashier.png" alt="Cashier at the counter" style="width:100%;height:100%;object-fit:cover;transform:scale(1.8);transform-origin:48% 40%;display:block"></div></div>
     <div class="sheet-cell reveal" style="padding:16px 0;border-top:1px solid rgba(255,255,255,.16)"><div style="font-size:clamp(20px,2.4vw,30px);font-weight:700;letter-spacing:-.03em;line-height:1.1" data-ms="Juruwang">Cashier</div><div style="font-size:13px;color:rgba(255,255,255,.55);margin-top:3px" data-ms="POS, pembayaran, kawalan barisan">POS, payments, queue control</div></div>
-    <div class="sheet-cell reveal" style="padding:16px 0;border-top:1px solid rgba(255,255,255,.16);text-align:right"><span style="font-size:10.5px;font-weight:700;letter-spacing:.1em;padding:5px 9px;border:1px solid rgba(255,255,255,.62);color:rgba(255,255,255,.85);white-space:nowrap" data-ms="ANDA TENTUKAN">YOU DECIDE</span></div>
 
     <div class="sheet-cell reveal" style="padding:16px 0;border-top:1px solid rgba(255,255,255,.16)"><img src="./assets/role-banquet.png" alt="Host in a hotel ballroom" style="width:62px;height:62px;border-radius:12px;object-fit:cover;object-position:40% 24%;display:block"></div>
     <div class="sheet-cell reveal" style="padding:16px 0;border-top:1px solid rgba(255,255,255,.16)"><div style="font-size:clamp(20px,2.4vw,30px);font-weight:700;letter-spacing:-.03em;line-height:1.1" data-ms="Staf bankuet">Banquet staff</div><div style="font-size:13px;color:rgba(255,255,255,.55);margin-top:3px" data-ms="Persediaan, perkhidmatan berurutan, pembongkaran">Set-up, sequence service, tear-down</div></div>
-    <div class="sheet-cell reveal" style="padding:16px 0;border-top:1px solid rgba(255,255,255,.16);text-align:right"><span style="font-size:10.5px;font-weight:700;letter-spacing:.1em;padding:5px 9px;border:1px solid rgba(255,255,255,.62);color:rgba(255,255,255,.85);white-space:nowrap" data-ms="ANDA TENTUKAN">YOU DECIDE</span></div>
 
     <div class="sheet-cell reveal" style="padding:16px 0;border-top:1px solid rgba(255,255,255,.16)"><img src="./assets/role-usher.png" alt="Event usher greeting a guest" style="width:62px;height:62px;border-radius:12px;object-fit:cover;object-position:64% 20%;display:block"></div>
     <div class="sheet-cell reveal" style="padding:16px 0;border-top:1px solid rgba(255,255,255,.16)"><div style="font-size:clamp(20px,2.4vw,30px);font-weight:700;letter-spacing:-.03em;line-height:1.1" data-ms="Pengiring acara">Event usher</div><div style="font-size:13px;color:rgba(255,255,255,.55);margin-top:3px" data-ms="Pendaftaran, tempat duduk, panduan lantai">Registration, seating, floor guidance</div></div>
-    <div class="sheet-cell reveal" style="padding:16px 0;border-top:1px solid rgba(255,255,255,.16);text-align:right"><span style="font-size:10.5px;font-weight:700;letter-spacing:.1em;padding:5px 9px;border:1px solid rgba(255,255,255,.62);color:rgba(255,255,255,.85);white-space:nowrap" data-ms="ANDA TENTUKAN">YOU DECIDE</span></div>
 
     <div class="sheet-cell reveal" style="padding:16px 0;border-top:1px solid rgba(255,255,255,.16);border-bottom:1px solid rgba(255,255,255,.16)"><div style="width:62px;height:62px;border-radius:12px;overflow:hidden"><img src="./assets/role-cafe.png" alt="Central kitchen staff plating food" style="width:100%;height:100%;object-fit:cover;transform:scale(1.7);transform-origin:66% 15%;display:block"></div></div>
     <div class="sheet-cell reveal" style="padding:16px 0;border-top:1px solid rgba(255,255,255,.16);border-bottom:1px solid rgba(255,255,255,.16)"><div style="font-size:clamp(20px,2.4vw,30px);font-weight:700;letter-spacing:-.03em;line-height:1.1" data-ms="Dapur pusat">Central kitchen</div><div style="font-size:13px;color:rgba(255,255,255,.55);margin-top:3px" data-ms="Pembungkusan, stok, penghantaran">Packing, stock, dispatch</div></div>
-    <div class="sheet-cell reveal" style="padding:16px 0;border-top:1px solid rgba(255,255,255,.16);border-bottom:1px solid rgba(255,255,255,.16);text-align:right"><span style="font-size:10.5px;font-weight:700;letter-spacing:.1em;padding:5px 9px;border:1px solid rgba(255,255,255,.62);color:rgba(255,255,255,.85);white-space:nowrap" data-ms="ANDA TENTUKAN">YOU DECIDE</span></div>
   </div>
   <p style="font-size:12px;color:rgba(255,255,255,.62);margin-top:14px" data-ms="Sijil Pengendali Makanan dan vaksinasi taun boleh ditetapkan sebagai keperluan apabila anda menyiarkan kerja. Setiap pekerja separuh masa di platform disahkan ID dan diorientasikan sebelum boleh memohon.">Food Handler Certificate and typhoid vaccination can be set as requirements when you post the job. Every part-timer on the platform is ID-verified and onboarded before they can apply.</p>
 </section>
@@ -267,66 +253,6 @@ body.loaded .hero-anim{animation-play-state:running}
   </div>
 </section>
 
-<section id="run" style="margin-top:76px;background:#F47F20;color:#131249">
-  <div style="max-width:1400px;margin:0 auto;padding:64px 26px">
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
-      <span style="width:26px;height:26px;flex:none;background:repeating-linear-gradient(45deg,#131249 0 6px,rgba(19,18,73,.3) 6px 12px);border-radius:3px"></span>
-      <span style="font-size:11px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:rgba(19,18,73,.6)">Section 03</span>
-    </div>
-    <h2 style="font-size:clamp(36px,6vw,84px);font-weight:700;letter-spacing:-.05em;line-height:.9;max-width:15em" data-ms="Anda siarkan kerja.<br>Kami uruskan platform.">You post the job.<br>We run the platform.</h2>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:28px;margin-top:44px">
-      <div class="reveal hover-card reveal-left" style="border-top:4px solid #131249;padding-top:16px">
-        <div style="font-size:10.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;opacity:.65" data-ms="Langkah 01">Step 01</div>
-        <div style="font-size:23px;font-weight:700;letter-spacing:-.025em;margin-top:9px" data-ms="Siarkan kerja">Post the job</div>
-        <p style="font-size:14px;line-height:1.55;margin-top:6px;opacity:.8" data-ms="Outlet, peranan, tarikh, waktu, bilangan pekerja dan kadar anda.">Outlet, role, date, hours, headcount and your rate.</p>
-      </div>
-      <div class="reveal hover-card reveal-left" style="border-top:4px solid #131249;padding-top:16px">
-        <div style="font-size:10.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;opacity:.65" data-ms="Langkah 02">Step 02</div>
-        <div style="font-size:23px;font-weight:700;letter-spacing:-.025em;margin-top:9px" data-ms="Mereka memohon">They apply</div>
-        <p style="font-size:14px;line-height:1.55;margin-top:6px;opacity:.8" data-ms="Pekerja separuh masa disahkan memohon terus. Upah pilihan anda dalam satu klik.">Vetted part-timers apply directly. Hire favourites in one click.</p>
-      </div>
-      <div class="reveal hover-card reveal-left" style="border-top:4px solid #131249;padding-top:16px">
-        <div style="font-size:10.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;opacity:.65" data-ms="Langkah 03">Step 03</div>
-        <div style="font-size:23px;font-weight:700;letter-spacing:-.025em;margin-top:9px" data-ms="Mereka daftar masuk">They check in</div>
-        <p style="font-size:14px;line-height:1.55;margin-top:6px;opacity:.8" data-ms="Daftar masuk bertanda geo dengan gambar. Laporan kehadiran automatik.">Geo-tagged check-in with photo. Attendance reports are automatic.</p>
-      </div>
-      <div class="reveal hover-card reveal-left" style="border-top:4px solid #131249;padding-top:16px">
-        <div style="font-size:10.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;opacity:.65" data-ms="Langkah 04">Step 04</div>
-        <div style="font-size:23px;font-weight:700;letter-spacing:-.025em;margin-top:9px" data-ms="Kredit ditolak">Credits deduct</div>
-        <p style="font-size:14px;line-height:1.55;margin-top:6px;opacity:.8" data-ms="Selepas syif tamat, kredit ditolak secara automatik. Kontrak dan pembayaran kepada pekerja separuh masa diuruskan untuk anda.">After the shift ends, credits auto-deduct. Contracts and payment to the part-timer are handled for you.</p>
-      </div>
-    </div>
-    <div style="display:flex;gap:12px;margin-top:44px;flex-wrap:wrap">
-      <div style="border:2px solid #131249;padding:11px 16px;font-size:12.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap" data-ms="RM 25 setiap syif selesai">RM 25 per completed shift</div><div style="border:2px solid #131249;padding:11px 16px;font-size:12.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap" data-ms="Tambah 8% SST">Plus 8% SST</div><div style="border:2px solid #131249;padding:11px 16px;font-size:12.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap" data-ms="Pesanan min. RM 5,000 sebulan">Min. order RM 5,000 monthly</div><div style="border:2px solid #131249;padding:11px 16px;font-size:12.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap" data-ms="Tambah nilai melalui kad atau FPX">Top up by card or FPX</div>
-    </div>
-  </div>
-</section>
-
-<section id="terms" style="max-width:1400px;margin:0 auto;padding:76px 26px 0">
-  <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
-    <span style="width:26px;height:26px;flex:none;background:repeating-linear-gradient(45deg,#F47F20 0 6px,#131249 6px 12px);border-radius:3px"></span>
-    <span style="font-size:11px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.5)">Section 04</span>
-  </div>
-  <h2 style="font-size:clamp(34px,5vw,62px);font-weight:700;letter-spacing:-.04em;line-height:.94" data-ms="Kos yang terlibat">What it costs</h2>
-  <div style="display:flex;gap:44px;margin-top:34px;padding-top:8px;flex-wrap:wrap">
-    <div class="reveal" style="flex:2 1 400px;min-width:0">
-      <div style="font-size:10.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#F47F20" data-ms="Platform Klien TROOPERS">TROOPERS Client Platform</div>
-      <div id="rmCounter" data-count-target="25" style="font-size:clamp(32px,4.4vw,54px);font-weight:700;letter-spacing:-.04em;line-height:1;margin-top:12px">RM 25</div>
-      <div style="font-size:17px;font-weight:600;margin-top:8px" data-ms="yuran penyelarasan setiap syif selesai">coordination fee per completed shift</div>
-      <p style="font-size:14.5px;line-height:1.6;color:rgba(255,255,255,.7);margin-top:12px;max-width:32em" data-ms="Tambah 8% SST. Pendapatan pekerja separuh masa dibayar tambahan pada kadar yang anda tetapkan. Satu syif bermaksud satu pekerja separuh masa untuk satu kerja pada waktu yang dipersetujui — lima orang untuk acara sehari bermaksud lima syif.">Plus 8% SST. Part-timers' earnings are paid on top at the rate you set. One shift means one part-timer on one job for the agreed hours — five people for a one-day event is five shifts.</p>
-    </div>
-    <div style="flex:1 1 320px;min-width:0;display:flex;flex-direction:column;gap:10px;font-size:14.5px;color:rgba(255,255,255,.75)">
-      <div class="reveal reveal-scale" style="border-top:1px solid rgba(255,255,255,.18);padding-top:11px" data-ms="Portal percuma yang anda urus sendiri untuk siaran kerja dan pemohon, pada kadar anda sendiri">Free self-managed portal for your job posts and applicants, at your own rates</div>
-      <div class="reveal reveal-scale" style="border-top:1px solid rgba(255,255,255,.18);padding-top:11px" data-ms="Pekerja separuh masa memohon terus; upah pilihan anda dalam satu klik">Part-timers apply directly; hire favourites in one click</div>
-      <div class="reveal reveal-scale" style="border-top:1px solid rgba(255,255,255,.18);padding-top:11px" data-ms="Tambah nilai melalui Visa, Mastercard atau FPX; kredit ditolak automatik setiap syif">Top up by Visa, Mastercard or FPX; credits auto-deduct per shift</div>
-      <div class="reveal reveal-scale" style="border-top:1px solid rgba(255,255,255,.18);padding-top:11px" data-ms="Daftar masuk bertanda geo dengan gambar dan laporan kehadiran automatik">Geo-tagged check-in with photo and automated attendance reports</div>
-      <div class="reveal reveal-scale" style="border-top:1px solid rgba(255,255,255,.18);padding-top:11px" data-ms="Kontrak dan pembayaran pekerja separuh masa diuruskan untuk anda">Part-timer contracts and payments handled for you</div>
-      <div class="reveal reveal-scale" style="border-top:1px solid rgba(255,255,255,.18);padding-top:11px" data-ms="Sokongan melalui WhatsApp atau e-mel">Support on WhatsApp or email</div>
-      <div class="reveal reveal-scale" style="border-top:1px solid rgba(255,255,255,.18);padding-top:11px;color:rgba(255,255,255,.62)" data-ms="Nilai pesanan minimum RM 5,000 jumlah yuran perkhidmatan bulanan. Pembatalan dalam masa 48 jam dikenakan caj 50%.">Minimum order value RM 5,000 in total monthly service fee. Cancellations under 48 hours are charged at 50%.</div>
-    </div>
-  </div>
-</section>
-
 <section id="finalcta" style="position:relative;overflow:hidden;margin-top:76px;border-top:6px solid #F47F20">
   <img src="./assets/case-fine-dining.png" alt="Server welcoming guests in a fine-dining restaurant" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 28%">
   <div style="position:absolute;inset:0;background:linear-gradient(100deg,#131249 24%,rgba(19,18,73,.8) 42%,rgba(19,18,73,.35) 66%,rgba(19,18,73,.15) 100%)"></div>
@@ -339,7 +265,7 @@ body.loaded .hero-anim{animation-play-state:running}
     <div class="reveal reveal-blur" style="flex:1 1 280px;min-width:0;background:rgba(19,18,73,.6);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.15);padding:24px 26px">
       <div style="font-size:10.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.62)" data-ms="Cara ia berfungsi">How it works</div>
       <div style="display:flex;flex-direction:column;margin-top:14px">
-        <div style="display:flex;gap:14px;border-top:1px solid rgba(255,255,255,.18);padding:14px 0"><span style="font-size:15px;font-weight:700;color:#F47F20;flex:none">01</span><span style="font-size:15px;line-height:1.5" data-ms='Cipta akaun percuma melalui <a href="https://troopersapp.com/employer-signup" target="_blank" rel="noopener" style="white-space:nowrap">https://troopersapp.com/employer-signup</a>'>Create a free account via <a href="https://troopersapp.com/employer-signup" target="_blank" rel="noopener" style="white-space:nowrap">https://troopersapp.com/employer-signup</a></span></div>
+        <div style="display:flex;gap:14px;border-top:1px solid rgba(255,255,255,.18);padding:14px 0"><span style="font-size:15px;font-weight:700;color:#F47F20;flex:none">01</span><span style="font-size:15px;line-height:1.5" data-ms="Cipta akaun percuma melalui TROOPERS APP">Create a free account via TROOPERS APP</span></div>
         <div style="display:flex;gap:14px;border-top:1px solid rgba(255,255,255,.18);padding:14px 0"><span style="font-size:15px;font-weight:700;color:#F47F20;flex:none">02</span><span style="font-size:15px;line-height:1.5" data-ms="Muat naik dokumen SSM anda">Upload your SSM documents</span></div>
         <div style="display:flex;gap:14px;border-top:1px solid rgba(255,255,255,.18);padding:14px 0"><span style="font-size:15px;font-weight:700;color:#F47F20;flex:none">03</span><span style="font-size:15px;line-height:1.5" data-ms="Prabayar kredit">Prepay credits</span></div>
         <div style="display:flex;gap:14px;border-top:1px solid rgba(255,255,255,.18);padding:14px 0"><span style="font-size:15px;font-weight:700;color:#F47F20;flex:none">04</span><span style="font-size:15px;line-height:1.5" data-ms="Hantar siaran kerja; pasukan kami akan menyemaknya dalam masa 3 hari bekerja">Submit a job post, a member of our team will review it within 3 business days</span></div>
@@ -476,7 +402,7 @@ body.loaded .hero-anim{animation-play-state:running}
       try{ history.pushState(null,'',location.pathname); }catch(err){}
     });
   }
-  var sections = ['sheet','calls','run','terms'].map(function(id){ return document.getElementById(id); }).filter(Boolean);
+  var sections = ['sheet','calls'].map(function(id){ return document.getElementById(id); }).filter(Boolean);
   var ticking = false;
   function onScroll(){
     if(ticking || autoScrolling) return;
@@ -499,36 +425,17 @@ body.loaded .hero-anim{animation-play-state:running}
 <script>
 (function(){
   var revealed = new WeakSet();
-  var counted = new WeakSet();
-  function animateCount(el, target, duration){
-    var start = Date.now();
-    function step(){
-      var p = Math.min((Date.now()-start)/duration, 1);
-      var eased = 1-Math.pow(1-p, 3);
-      el.textContent = 'RM ' + Math.round(target*eased);
-      if(p<1){ setTimeout(step, 16); }
-      else { el.textContent = 'RM ' + target; }
-    }
-    step();
-  }
   function revealGroup(container){
     if(!container) return;
     var items = Array.prototype.slice.call(container.querySelectorAll('.reveal'));
     items.forEach(function(el, i){
       if(revealed.has(el)) return;
       revealed.add(el);
-      setTimeout(function(){
-        el.classList.add('in-view');
-        var counter = el.id==='rmCounter' ? el : el.querySelector && el.querySelector('#rmCounter');
-        if(counter && !counted.has(counter)){
-          counted.add(counter);
-          animateCount(counter, parseInt(counter.dataset.countTarget,10)||0, 900);
-        }
-      }, i*70);
+      setTimeout(function(){ el.classList.add('in-view'); }, i*70);
     });
   }
   window.__revealSection = revealGroup;
-  var groups = Array.prototype.slice.call(document.querySelectorAll('#sheet,#calls,#run,#terms,#finalcta,#siteFooter'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('#sheet,#calls,#finalcta,#siteFooter'));
   if('IntersectionObserver' in window){
     var io = new IntersectionObserver(function(entries){
       if(window.__navAutoScrolling) return;
