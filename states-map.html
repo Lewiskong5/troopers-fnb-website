@@ -145,14 +145,14 @@ h1,h2,p{margin:0}
 
   // ---- animation state machine ----
   const INTRO_MS = 4200;
-  const TRANSITION_MS = 2200;
+  const ROTATE_MS = 1600;
+  const ZOOM_MS = 1800;
   const startTime = performance.now();
-  let phase = 'intro'; // intro -> transition -> settled
-  let transitionStartRotate = null;
-  let transitionStartTime = 0;
+  let phase = 'intro'; // intro -> rotating -> zooming -> settled
+  let stepStartRotate = null;
+  let stepStartTime = 0;
   let hoveredFeature = -1;
   let interactive = false;
-  let autoDrift = 0.015;
 
   function easeCubic(t){ return t<0.5 ? 4*t*t*t : 1-Math.pow(-2*t+2,3)/2; }
 
@@ -164,12 +164,29 @@ h1,h2,p{margin:0}
       const r = projection.rotate();
       projection.rotate([r[0] + 0.45, r[1]*0.98, 0]);
       if (elapsed > INTRO_MS){
-        phase = 'transition';
-        transitionStartRotate = projection.rotate();
-        transitionStartTime = now;
+        phase = 'rotating';
+        stepStartRotate = projection.rotate();
+        stepStartTime = now;
       }
-    } else if (phase === 'transition'){
-      let t = (now - transitionStartTime) / TRANSITION_MS;
+    } else if (phase === 'rotating'){
+      let t = (now - stepStartTime) / ROTATE_MS;
+      if (t >= 1){
+        t = 1;
+        phase = 'zooming';
+        stepStartTime = now;
+      }
+      const te = easeCubic(t);
+      const r0 = stepStartRotate;
+      // shortest-path longitude interpolation
+      let dLon = malaysiaRotate[0] - r0[0];
+      dLon = ((dLon + 540) % 360) - 180;
+      const curLon = r0[0] + dLon * te;
+      const curLat = r0[1] + (malaysiaRotate[1] - r0[1]) * te;
+      projection.rotate([curLon, curLat, 0]);
+      projection.scale(worldRadius);
+      render._blend = 0;
+    } else if (phase === 'zooming'){
+      let t = (now - stepStartTime) / ZOOM_MS;
       if (t >= 1){
         t = 1;
         phase = 'settled';
@@ -178,24 +195,16 @@ h1,h2,p{margin:0}
         canvas.classList.remove('locked');
       }
       const te = easeCubic(t);
-      const r0 = transitionStartRotate;
-      // shortest-path longitude interpolation
-      let dLon = malaysiaRotate[0] - r0[0];
-      dLon = ((dLon + 540) % 360) - 180;
-      const curLon = r0[0] + dLon * te;
-      const curLat = r0[1] + (malaysiaRotate[1] - r0[1]) * te;
-      projection.rotate([curLon, curLat, 0]);
+      projection.rotate(malaysiaRotate);
       projection.scale(worldRadius + (malaysiaScale - worldRadius) * te);
       render._blend = te;
     } else if (phase === 'settled'){
-      const r = projection.rotate();
-      projection.rotate([r[0] + autoDrift, r[1], 0]);
       render._blend = 1;
     }
 
     const scale = projection.scale();
-    const worldBlend = phase === 'intro' ? 1 : (phase === 'transition' ? 1 - render._blend : 0);
-    const malaysiaBlend = phase === 'intro' ? 0 : (phase === 'transition' ? render._blend : 1);
+    const worldBlend = (phase === 'intro' || phase === 'rotating') ? 1 : (phase === 'zooming' ? 1 - render._blend : 0);
+    const malaysiaBlend = (phase === 'intro' || phase === 'rotating') ? 0 : (phase === 'zooming' ? render._blend : 1);
 
     // ocean / globe backdrop
     ctx.beginPath();
@@ -291,7 +300,6 @@ h1,h2,p{margin:0}
   function pointerDown(x, y){
     if (!interactive) return;
     dragging = true;
-    autoDrift = 0;
     lastX = x; lastY = y;
     rotation0 = projection.rotate();
   }
@@ -321,7 +329,6 @@ h1,h2,p{margin:0}
   }
   function pointerUp(){
     dragging = false;
-    setTimeout(() => { if (interactive) autoDrift = 0.015; }, 1200);
   }
 
   canvas.addEventListener('mousedown', e => pointerDown(e.clientX, e.clientY));
@@ -336,7 +343,6 @@ h1,h2,p{margin:0}
   canvas.addEventListener('wheel', e => {
     if (!interactive) return;
     e.preventDefault();
-    autoDrift = 0;
     const factor = e.deltaY > 0 ? 0.92 : 1.08;
     const next = Math.max(malaysiaScale*0.6, Math.min(malaysiaScale*4, projection.scale()*factor));
     projection.scale(next);
