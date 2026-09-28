@@ -162,7 +162,7 @@ h1,h2,p{margin:0}
 
     if (phase === 'intro'){
       const r = projection.rotate();
-      projection.rotate([r[0] + 0.45, r[1]*0.98, 0]);
+      projection.rotate([r[0] + 0.85, r[1]*0.98, 0]);
       if (elapsed > INTRO_MS){
         phase = 'rotating';
         stepStartRotate = projection.rotate();
