@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TROOPERS — Coverage across Malaysia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<style>
+body{margin:0;background:#131249;font-family:'Poppins',system-ui,sans-serif;color:#fff;-webkit-font-smoothing:antialiased}
+a{color:#F47F20;text-decoration:none}
+a:hover{color:#fff}
+h1,h2,p{margin:0}
+#globeWrap{position:relative;display:flex;align-items:center;justify-content:center}
+#globeCanvas{cursor:grab;touch-action:none}
+#globeCanvas:active{cursor:grabbing}
+#hint{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.5);background:rgba(255,255,255,.06);padding:8px 14px;border-radius:20px;pointer-events:none;white-space:nowrap}
+#tooltip{position:absolute;pointer-events:none;background:#F47F20;color:#131249;font-weight:700;font-size:13px;padding:6px 12px;border-radius:8px;opacity:0;transition:opacity .15s ease;white-space:nowrap;transform:translate(-50%,-130%)}
+.state-chip{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border:1px solid rgba(255,255,255,.18);border-radius:20px;font-size:12.5px;color:rgba(255,255,255,.75);transition:border-color .2s ease,color .2s ease,background .2s ease;cursor:default}
+.state-chip.active{border-color:#F47F20;color:#fff;background:rgba(244,127,32,.12)}
+.state-dot{width:7px;height:7px;border-radius:50%;background:#F47F20;flex:none}
+.spinner{width:40px;height:40px;border:4px solid rgba(244,127,32,.25);border-top-color:#F47F20;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<div style="height:10px;background:repeating-linear-gradient(45deg,#F47F20 0 14px,#131249 14px 28px)"></div>
+
+<header style="max-width:1100px;margin:0 auto;padding:20px 26px 0;display:flex;align-items:center;gap:16px">
+  <a href="./index.html" style="font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;display:flex;align-items:center;gap:6px">&larr; Back to site</a>
+</header>
+
+<section style="max-width:1100px;margin:0 auto;padding:24px 26px 0;text-align:center">
+  <div style="font-size:11px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:#F47F20">Nationwide coverage</div>
+  <h1 style="font-size:clamp(28px,4.5vw,46px);font-weight:700;letter-spacing:-.03em;margin-top:10px">Part-timers, on the ground in every state.</h1>
+  <p style="font-size:14.5px;line-height:1.6;color:rgba(255,255,255,.6);max-width:34em;margin:14px auto 0">Drag to rotate, scroll or pinch to zoom. Every dot is part of the same talent pool available on your call sheet.</p>
+</section>
+
+<div id="globeWrap" style="margin-top:20px">
+  <canvas id="globeCanvas"></canvas>
+  <div id="tooltip"></div>
+  <div id="hint">Drag to rotate &middot; Scroll to zoom</div>
+</div>
+<div id="loading" style="text-align:center;padding:60px 0"><div class="spinner"></div><p style="margin-top:14px;font-size:12.5px;color:rgba(255,255,255,.5)">Loading map…</p></div>
+
+<section style="max-width:900px;margin:36px auto 0;padding:0 26px;display:flex;flex-wrap:wrap;gap:10px;justify-content:center" id="stateChips"></section>
+
+<footer style="max-width:1100px;margin:56px auto 0;padding:22px 26px;border-top:1px solid rgba(255,255,255,.12);text-align:center">
+  <p style="font-size:12px;color:rgba(255,255,255,.45)">TROOPERS Innovation Sdn. Bhd. (1240374-W)</p>
+</footer>
+
+<script>
+(async function(){
+  const canvas = document.getElementById('globeCanvas');
+  const ctx = canvas.getContext('2d');
+  const tooltip = document.getElementById('tooltip');
+  const wrap = document.getElementById('globeWrap');
+  const loading = document.getElementById('loading');
+  const chipsHost = document.getElementById('stateChips');
+
+  const size = Math.min(680, window.innerWidth - 40);
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = size * dpr;
+  canvas.height = size * dpr;
+  canvas.style.width = size + 'px';
+  canvas.style.height = size + 'px';
+  ctx.scale(dpr, dpr);
+
+  const projection = d3.geoOrthographic().clipAngle(90);
+  const path = d3.geoPath(projection, ctx);
+
+  let land;
+  try {
+    land = await (await fetch('./assets/malaysia-states.geojson')).json();
+  } catch (e) {
+    loading.innerHTML = '<p style="color:rgba(255,255,255,.6);font-size:13px">Could not load the map right now.</p>';
+    return;
+  }
+
+  const centerLon = 109.7, centerLat = 4.0;
+  projection.rotate([-centerLon, -centerLat, 0]);
+  projection.fitExtent([[size*0.08, size*0.08],[size*0.92, size*0.92]], {type:'FeatureCollection', features: land.features});
+  const fittedScale = projection.scale();
+  projection.translate([size/2, size/2]);
+
+  function pointInRing(pt, ring){
+    let inside = false;
+    for (let i=0, j=ring.length-1; i<ring.length; j=i++){
+      const xi=ring[i][0], yi=ring[i][1], xj=ring[j][0], yj=ring[j][1];
+      if ((yi>pt[1]) !== (yj>pt[1]) && pt[0] < (xj-xi)*(pt[1]-yi)/(yj-yi)+xi) inside = !inside;
+    }
+    return inside;
+  }
+  function pointInFeature(pt, feature){
+    const g = feature.geometry;
+    const polys = g.type === 'Polygon' ? [g.coordinates] : g.coordinates;
+    for (const poly of polys){
+      if (pointInRing(pt, poly[0])){
+        let hole = false;
+        for (let i=1;i<poly.length;i++){ if (pointInRing(pt, poly[i])){ hole = true; break; } }
+        if (!hole) return true;
+      }
+    }
+    return false;
+  }
+
+  const step = 0.14;
+  const dots = [];
+  land.features.forEach((feature, idx) => {
+    const [[minLng,minLat],[maxLng,maxLat]] = d3.geoBounds(feature);
+    for (let lng=minLng; lng<=maxLng; lng+=step){
+      for (let lat=minLat; lat<=maxLat; lat+=step){
+        if (pointInFeature([lng,lat], feature)) dots.push({lng, lat, feature: idx});
+      }
+    }
+  });
+
+  const stateNames = land.features.map(f => f.properties.name || 'Unknown');
+  stateNames.forEach(name => {
+    const chip = document.createElement('span');
+    chip.className = 'state-chip';
+    chip.dataset.name = name;
+    chip.innerHTML = '<span class="state-dot"></span>' + name;
+    chipsHost.appendChild(chip);
+  });
+
+  let hoveredFeature = -1;
+
+  function render(){
+    ctx.clearRect(0,0,size,size);
+    const scaleFactor = projection.scale() / fittedScale;
+
+    ctx.beginPath();
+    ctx.arc(size/2, size/2, projection.scale(), 0, 2*Math.PI);
+    ctx.fillStyle = '#0d0c38';
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(244,127,32,.55)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    const graticule = d3.geoGraticule().step([10,10]);
+    ctx.beginPath();
+    path(graticule());
+    ctx.strokeStyle = 'rgba(255,255,255,.12)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    land.features.forEach((feature, idx) => {
+      ctx.beginPath();
+      path(feature);
+      ctx.strokeStyle = idx === hoveredFeature ? '#F47F20' : 'rgba(255,255,255,.4)';
+      ctx.lineWidth = idx === hoveredFeature ? 2 : 1;
+      ctx.stroke();
+      if (idx === hoveredFeature){
+        ctx.fillStyle = 'rgba(244,127,32,.12)';
+        ctx.fill();
+      }
+    });
+
+    dots.forEach(dot => {
+      const p = projection([dot.lng, dot.lat]);
+      if (!p) return;
+      const r = (dot.feature === hoveredFeature ? 1.8 : 1.2) * Math.min(1.6, Math.max(0.5, scaleFactor));
+      ctx.beginPath();
+      ctx.arc(p[0], p[1], r, 0, 2*Math.PI);
+      ctx.fillStyle = dot.feature === hoveredFeature ? '#fff' : 'rgba(244,127,32,.85)';
+      ctx.fill();
+    });
+  }
+
+  loading.style.display = 'none';
+  render();
+
+  let autoRotate = true;
+  const rotationSpeed = 0.12;
+  const timer = d3.timer(() => {
+    if (autoRotate){
+      const r = projection.rotate();
+      projection.rotate([r[0] + rotationSpeed, r[1], r[2]]);
+      render();
+    }
+  });
+
+  function findFeatureAt(mx, my){
+    const lonlat = projection.invert ? projection.invert([mx, my]) : null;
+    if (!lonlat || isNaN(lonlat[0])) return -1;
+    for (let i=0;i<land.features.length;i++){
+      if (pointInFeature(lonlat, land.features[i])) return i;
+    }
+    return -1;
+  }
+
+  function setActiveChip(name){
+    [...chipsHost.children].forEach(c => c.classList.toggle('active', c.dataset.name === name));
+  }
+
+  let dragging = false, lastX = 0, lastY = 0, rotation0 = null;
+
+  function pointerDown(x, y){
+    dragging = true;
+    autoRotate = false;
+    lastX = x; lastY = y;
+    rotation0 = projection.rotate();
+  }
+  function pointerMove(x, y){
+    const rect = canvas.getBoundingClientRect();
+    const mx = x - rect.left, my = y - rect.top;
+    if (dragging){
+      const dx = x - lastX, dy = y - lastY;
+      const sensitivity = 0.35;
+      const r = [rotation0[0] + dx*sensitivity, Math.max(-90, Math.min(90, rotation0[1] - dy*sensitivity)), 0];
+      projection.rotate(r);
+      render();
+    } else {
+      const idx = findFeatureAt(mx, my);
+      if (idx !== hoveredFeature){
+        hoveredFeature = idx;
+        render();
+      }
+      if (idx >= 0){
+        tooltip.textContent = stateNames[idx];
+        tooltip.style.left = mx + 'px';
+        tooltip.style.top = my + 'px';
+        tooltip.style.opacity = 1;
+        setActiveChip(stateNames[idx]);
+      } else {
+        tooltip.style.opacity = 0;
+        setActiveChip(null);
+      }
+    }
+  }
+  function pointerUp(){
+    dragging = false;
+    setTimeout(() => { autoRotate = true; }, 1200);
+  }
+
+  canvas.addEventListener('mousedown', e => pointerDown(e.clientX, e.clientY));
+  window.addEventListener('mousemove', e => pointerMove(e.clientX, e.clientY));
+  window.addEventListener('mouseup', pointerUp);
+  canvas.addEventListener('mouseleave', () => { if (!dragging){ tooltip.style.opacity = 0; hoveredFeature = -1; render(); setActiveChip(null); } });
+
+  canvas.addEventListener('touchstart', e => { const t = e.touches[0]; pointerDown(t.clientX, t.clientY); }, {passive:true});
+  canvas.addEventListener('touchmove', e => { const t = e.touches[0]; pointerMove(t.clientX, t.clientY); }, {passive:true});
+  canvas.addEventListener('touchend', pointerUp);
+
+  canvas.addEventListener('wheel', e => {
+    e.preventDefault();
+    autoRotate = false;
+    const factor = e.deltaY > 0 ? 0.92 : 1.08;
+    const next = Math.max(fittedScale*0.6, Math.min(fittedScale*4, projection.scale()*factor));
+    projection.scale(next);
+    render();
+  }, {passive:false});
+
+})();
+</script>
+</body>
+</html>
