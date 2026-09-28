@@ -13,8 +13,9 @@ a:hover{color:#fff}
 h1,h2,p{margin:0}
 #globeWrap{position:relative;display:flex;align-items:center;justify-content:center}
 #globeCanvas{cursor:grab;touch-action:none}
+#globeCanvas.locked{cursor:default}
 #globeCanvas:active{cursor:grabbing}
-#hint{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.5);background:rgba(255,255,255,.06);padding:8px 14px;border-radius:20px;pointer-events:none;white-space:nowrap}
+#hint{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.5);background:rgba(255,255,255,.06);padding:8px 14px;border-radius:20px;pointer-events:none;white-space:nowrap;transition:opacity .3s ease}
 #tooltip{position:absolute;pointer-events:none;background:#F47F20;color:#131249;font-weight:700;font-size:13px;padding:6px 12px;border-radius:8px;opacity:0;transition:opacity .15s ease;white-space:nowrap;transform:translate(-50%,-130%)}
 .state-chip{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border:1px solid rgba(255,255,255,.18);border-radius:20px;font-size:12.5px;color:rgba(255,255,255,.75);transition:border-color .2s ease,color .2s ease,background .2s ease;cursor:default}
 .state-chip.active{border-color:#F47F20;color:#fff;background:rgba(244,127,32,.12)}
@@ -34,13 +35,13 @@ h1,h2,p{margin:0}
 <section style="max-width:1100px;margin:0 auto;padding:24px 26px 0;text-align:center">
   <div style="font-size:11px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:#F47F20">Nationwide coverage</div>
   <h1 style="font-size:clamp(28px,4.5vw,46px);font-weight:700;letter-spacing:-.03em;margin-top:10px">Part-timers, on the ground in every state.</h1>
-  <p style="font-size:14.5px;line-height:1.6;color:rgba(255,255,255,.6);max-width:34em;margin:14px auto 0">Drag to rotate, scroll or pinch to zoom. Every dot is part of the same talent pool available on your call sheet.</p>
+  <p style="font-size:14.5px;line-height:1.6;color:rgba(255,255,255,.6);max-width:34em;margin:14px auto 0">Every lit-up point is a state with active talent on the platform.</p>
 </section>
 
 <div id="globeWrap" style="margin-top:20px">
   <canvas id="globeCanvas"></canvas>
   <div id="tooltip"></div>
-  <div id="hint">Drag to rotate &middot; Scroll to zoom</div>
+  <div id="hint">Finding Malaysia…</div>
 </div>
 <div id="loading" style="text-align:center;padding:60px 0"><div class="spinner"></div><p style="margin-top:14px;font-size:12.5px;color:rgba(255,255,255,.5)">Loading map…</p></div>
 
@@ -55,9 +56,9 @@ h1,h2,p{margin:0}
   const canvas = document.getElementById('globeCanvas');
   const ctx = canvas.getContext('2d');
   const tooltip = document.getElementById('tooltip');
-  const wrap = document.getElementById('globeWrap');
   const loading = document.getElementById('loading');
   const chipsHost = document.getElementById('stateChips');
+  const hint = document.getElementById('hint');
 
   const size = Math.min(680, window.innerWidth - 40);
   const dpr = window.devicePixelRatio || 1;
@@ -67,23 +68,21 @@ h1,h2,p{margin:0}
   canvas.style.height = size + 'px';
   ctx.scale(dpr, dpr);
 
-  const projection = d3.geoOrthographic().clipAngle(90);
+  const projection = d3.geoOrthographic().clipAngle(90).translate([size/2, size/2]);
   const path = d3.geoPath(projection, ctx);
 
-  let land;
+  let world, malaysia;
   try {
-    land = await (await fetch('./assets/malaysia-states.geojson')).json();
+    [world, malaysia] = await Promise.all([
+      fetch('./assets/world-land.geojson').then(r => r.json()),
+      fetch('./assets/malaysia-states.geojson').then(r => r.json())
+    ]);
   } catch (e) {
     loading.innerHTML = '<p style="color:rgba(255,255,255,.6);font-size:13px">Could not load the map right now.</p>';
     return;
   }
 
-  const centerLon = 109.7, centerLat = 4.0;
-  projection.rotate([-centerLon, -centerLat, 0]);
-  projection.fitExtent([[size*0.08, size*0.08],[size*0.92, size*0.92]], {type:'FeatureCollection', features: land.features});
-  const fittedScale = projection.scale();
-  projection.translate([size/2, size/2]);
-
+  // ---- geometry helpers ----
   function pointInRing(pt, ring){
     let inside = false;
     for (let i=0, j=ring.length-1; i<ring.length; j=i++){
@@ -104,19 +103,36 @@ h1,h2,p{margin:0}
     }
     return false;
   }
-
-  const step = 0.14;
-  const dots = [];
-  land.features.forEach((feature, idx) => {
-    const [[minLng,minLat],[maxLng,maxLat]] = d3.geoBounds(feature);
-    for (let lng=minLng; lng<=maxLng; lng+=step){
-      for (let lat=minLat; lat<=maxLat; lat+=step){
-        if (pointInFeature([lng,lat], feature)) dots.push({lng, lat, feature: idx});
+  function dotsForFeatures(features, step){
+    const dots = [];
+    features.forEach(feature => {
+      const [[minLng,minLat],[maxLng,maxLat]] = d3.geoBounds(feature);
+      for (let lng=minLng; lng<=maxLng; lng+=step){
+        for (let lat=minLat; lat<=maxLat; lat+=step){
+          if (pointInFeature([lng,lat], feature)) dots.push({lng, lat});
+        }
       }
-    }
-  });
+    });
+    return dots;
+  }
 
-  const stateNames = land.features.map(f => f.properties.name || 'Unknown');
+  const worldDots = dotsForFeatures(world.features, 1.3);
+  const worldRadius = size/2.3;
+
+  // Determine the fitted (zoomed-in) view for Malaysia
+  const centerLon = 109.7, centerLat = 4.0;
+  const malaysiaRotate = [-centerLon, -centerLat, 0];
+  projection.rotate(malaysiaRotate);
+  projection.fitExtent([[size*0.1, size*0.1],[size*0.9, size*0.9]], {type:'FeatureCollection', features: malaysia.features});
+  const malaysiaScale = projection.scale();
+  // reset to world view for the intro
+  projection.rotate([0,0,0]).scale(worldRadius);
+
+  const markers = malaysia.features.map(f => {
+    const c = d3.geoCentroid(f);
+    return { lng: c[0], lat: c[1], name: f.properties.name || 'Unknown', feature: f };
+  });
+  const stateNames = markers.map(m => m.name);
   stateNames.forEach(name => {
     const chip = document.createElement('span');
     chip.className = 'state-chip';
@@ -125,20 +141,74 @@ h1,h2,p{margin:0}
     chipsHost.appendChild(chip);
   });
 
+  loading.style.display = 'none';
+
+  // ---- animation state machine ----
+  const INTRO_MS = 4200;
+  const TRANSITION_MS = 2200;
+  const startTime = performance.now();
+  let phase = 'intro'; // intro -> transition -> settled
+  let transitionStartRotate = null;
+  let transitionStartTime = 0;
   let hoveredFeature = -1;
+  let interactive = false;
+  let autoDrift = 0.015;
 
-  function render(){
+  function easeCubic(t){ return t<0.5 ? 4*t*t*t : 1-Math.pow(-2*t+2,3)/2; }
+
+  function render(now){
+    const elapsed = now - startTime;
     ctx.clearRect(0,0,size,size);
-    const scaleFactor = projection.scale() / fittedScale;
 
+    if (phase === 'intro'){
+      const r = projection.rotate();
+      projection.rotate([r[0] + 0.45, r[1]*0.98, 0]);
+      if (elapsed > INTRO_MS){
+        phase = 'transition';
+        transitionStartRotate = projection.rotate();
+        transitionStartTime = now;
+      }
+    } else if (phase === 'transition'){
+      let t = (now - transitionStartTime) / TRANSITION_MS;
+      if (t >= 1){
+        t = 1;
+        phase = 'settled';
+        interactive = true;
+        hint.textContent = 'Drag to rotate · Scroll to zoom';
+        canvas.classList.remove('locked');
+      }
+      const te = easeCubic(t);
+      const r0 = transitionStartRotate;
+      // shortest-path longitude interpolation
+      let dLon = malaysiaRotate[0] - r0[0];
+      dLon = ((dLon + 540) % 360) - 180;
+      const curLon = r0[0] + dLon * te;
+      const curLat = r0[1] + (malaysiaRotate[1] - r0[1]) * te;
+      projection.rotate([curLon, curLat, 0]);
+      projection.scale(worldRadius + (malaysiaScale - worldRadius) * te);
+      render._blend = te;
+    } else if (phase === 'settled'){
+      const r = projection.rotate();
+      projection.rotate([r[0] + autoDrift, r[1], 0]);
+      render._blend = 1;
+    }
+
+    const scale = projection.scale();
+    const worldBlend = phase === 'intro' ? 1 : (phase === 'transition' ? 1 - render._blend : 0);
+    const malaysiaBlend = phase === 'intro' ? 0 : (phase === 'transition' ? render._blend : 1);
+
+    // ocean / globe backdrop
     ctx.beginPath();
-    ctx.arc(size/2, size/2, projection.scale(), 0, 2*Math.PI);
+    ctx.arc(size/2, size/2, scale, 0, 2*Math.PI);
     ctx.fillStyle = '#0d0c38';
     ctx.fill();
-    ctx.strokeStyle = 'rgba(244,127,32,.55)';
-    ctx.lineWidth = 2;
-    ctx.stroke();
+    if (scale < size*0.9){
+      ctx.strokeStyle = 'rgba(244,127,32,.5)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
 
+    // graticule
     const graticule = d3.geoGraticule().step([10,10]);
     ctx.beginPath();
     path(graticule());
@@ -146,51 +216,72 @@ h1,h2,p{margin:0}
     ctx.lineWidth = 1;
     ctx.stroke();
 
-    land.features.forEach((feature, idx) => {
+    // world dot texture (fades out as we approach Malaysia)
+    if (worldBlend > 0.01){
+      ctx.globalAlpha = worldBlend;
       ctx.beginPath();
-      path(feature);
-      ctx.strokeStyle = idx === hoveredFeature ? '#F47F20' : 'rgba(255,255,255,.4)';
-      ctx.lineWidth = idx === hoveredFeature ? 2 : 1;
+      world.features.forEach(f => path(f));
+      ctx.strokeStyle = 'rgba(255,255,255,.35)';
+      ctx.lineWidth = 1;
       ctx.stroke();
-      if (idx === hoveredFeature){
-        ctx.fillStyle = 'rgba(244,127,32,.12)';
+      worldDots.forEach(dot => {
+        const p = projection([dot.lng, dot.lat]);
+        if (!p || p[0]<0 || p[0]>size || p[1]<0 || p[1]>size) return;
+        ctx.beginPath();
+        ctx.arc(p[0], p[1], 1.1, 0, 2*Math.PI);
+        ctx.fillStyle = 'rgba(244,127,32,.7)';
         ctx.fill();
-      }
-    });
+      });
+      ctx.globalAlpha = 1;
+    }
 
-    dots.forEach(dot => {
-      const p = projection([dot.lng, dot.lat]);
-      if (!p) return;
-      const r = (dot.feature === hoveredFeature ? 1.8 : 1.2) * Math.min(1.6, Math.max(0.5, scaleFactor));
-      ctx.beginPath();
-      ctx.arc(p[0], p[1], r, 0, 2*Math.PI);
-      ctx.fillStyle = dot.feature === hoveredFeature ? '#fff' : 'rgba(244,127,32,.85)';
-      ctx.fill();
-    });
+    // Malaysia state outlines + pulsing markers (fade in)
+    if (malaysiaBlend > 0.01){
+      ctx.globalAlpha = malaysiaBlend;
+      malaysia.features.forEach((feature, idx) => {
+        ctx.beginPath();
+        path(feature);
+        ctx.strokeStyle = idx === hoveredFeature ? '#F47F20' : 'rgba(255,255,255,.45)';
+        ctx.lineWidth = idx === hoveredFeature ? 2 : 1;
+        ctx.stroke();
+      });
+
+      const scaleFactor = Math.min(1.6, Math.max(0.6, scale / malaysiaScale));
+      markers.forEach((m, idx) => {
+        const p = projection([m.lng, m.lat]);
+        if (!p) return;
+        const isHot = idx === hoveredFeature;
+        const pulse = ((now * 0.001 + idx*0.35) % 1.6) / 1.6;
+        const ringR = (4 + pulse*13) * scaleFactor;
+        ctx.beginPath();
+        ctx.arc(p[0], p[1], ringR, 0, 2*Math.PI);
+        ctx.strokeStyle = `rgba(244,127,32,${(1-pulse)*0.55})`;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(p[0], p[1], (isHot ? 5.5 : 3.5) * scaleFactor, 0, 2*Math.PI);
+        ctx.fillStyle = isHot ? '#ffffff' : '#F47F20';
+        ctx.shadowColor = '#F47F20';
+        ctx.shadowBlur = isHot ? 14 : 8;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      });
+      ctx.globalAlpha = 1;
+    }
   }
 
-  loading.style.display = 'none';
-  render();
+  setInterval(() => render(performance.now()), 16);
 
-  let autoRotate = true;
-  const rotationSpeed = 0.12;
-  const timer = d3.timer(() => {
-    if (autoRotate){
-      const r = projection.rotate();
-      projection.rotate([r[0] + rotationSpeed, r[1], r[2]]);
-      render();
-    }
-  });
-
+  // ---- interaction (only once settled) ----
   function findFeatureAt(mx, my){
     const lonlat = projection.invert ? projection.invert([mx, my]) : null;
     if (!lonlat || isNaN(lonlat[0])) return -1;
-    for (let i=0;i<land.features.length;i++){
-      if (pointInFeature(lonlat, land.features[i])) return i;
+    for (let i=0;i<malaysia.features.length;i++){
+      if (pointInFeature(lonlat, malaysia.features[i])) return i;
     }
     return -1;
   }
-
   function setActiveChip(name){
     [...chipsHost.children].forEach(c => c.classList.toggle('active', c.dataset.name === name));
   }
@@ -198,12 +289,14 @@ h1,h2,p{margin:0}
   let dragging = false, lastX = 0, lastY = 0, rotation0 = null;
 
   function pointerDown(x, y){
+    if (!interactive) return;
     dragging = true;
-    autoRotate = false;
+    autoDrift = 0;
     lastX = x; lastY = y;
     rotation0 = projection.rotate();
   }
   function pointerMove(x, y){
+    if (!interactive) return;
     const rect = canvas.getBoundingClientRect();
     const mx = x - rect.left, my = y - rect.top;
     if (dragging){
@@ -211,13 +304,9 @@ h1,h2,p{margin:0}
       const sensitivity = 0.35;
       const r = [rotation0[0] + dx*sensitivity, Math.max(-90, Math.min(90, rotation0[1] - dy*sensitivity)), 0];
       projection.rotate(r);
-      render();
     } else {
       const idx = findFeatureAt(mx, my);
-      if (idx !== hoveredFeature){
-        hoveredFeature = idx;
-        render();
-      }
+      if (idx !== hoveredFeature) hoveredFeature = idx;
       if (idx >= 0){
         tooltip.textContent = stateNames[idx];
         tooltip.style.left = mx + 'px';
@@ -232,25 +321,25 @@ h1,h2,p{margin:0}
   }
   function pointerUp(){
     dragging = false;
-    setTimeout(() => { autoRotate = true; }, 1200);
+    setTimeout(() => { if (interactive) autoDrift = 0.015; }, 1200);
   }
 
   canvas.addEventListener('mousedown', e => pointerDown(e.clientX, e.clientY));
   window.addEventListener('mousemove', e => pointerMove(e.clientX, e.clientY));
   window.addEventListener('mouseup', pointerUp);
-  canvas.addEventListener('mouseleave', () => { if (!dragging){ tooltip.style.opacity = 0; hoveredFeature = -1; render(); setActiveChip(null); } });
+  canvas.addEventListener('mouseleave', () => { if (!dragging && interactive){ tooltip.style.opacity = 0; hoveredFeature = -1; setActiveChip(null); } });
 
   canvas.addEventListener('touchstart', e => { const t = e.touches[0]; pointerDown(t.clientX, t.clientY); }, {passive:true});
   canvas.addEventListener('touchmove', e => { const t = e.touches[0]; pointerMove(t.clientX, t.clientY); }, {passive:true});
   canvas.addEventListener('touchend', pointerUp);
 
   canvas.addEventListener('wheel', e => {
+    if (!interactive) return;
     e.preventDefault();
-    autoRotate = false;
+    autoDrift = 0;
     const factor = e.deltaY > 0 ? 0.92 : 1.08;
-    const next = Math.max(fittedScale*0.6, Math.min(fittedScale*4, projection.scale()*factor));
+    const next = Math.max(malaysiaScale*0.6, Math.min(malaysiaScale*4, projection.scale()*factor));
     projection.scale(next);
-    render();
   }, {passive:false});
 
 })();
