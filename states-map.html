@@ -60,7 +60,7 @@ h1,h2,p{margin:0}
   const chipsHost = document.getElementById('stateChips');
   const hint = document.getElementById('hint');
 
-  const size = Math.min(680, window.innerWidth - 40);
+  const size = Math.min(960, window.innerWidth - 40);
   const dpr = window.devicePixelRatio || 1;
   canvas.width = size * dpr;
   canvas.height = size * dpr;
@@ -309,7 +309,7 @@ h1,h2,p{margin:0}
     const mx = x - rect.left, my = y - rect.top;
     if (dragging){
       const dx = x - lastX, dy = y - lastY;
-      const sensitivity = 0.35;
+      const sensitivity = 0.15;
       const r = [rotation0[0] + dx*sensitivity, Math.max(-90, Math.min(90, rotation0[1] - dy*sensitivity)), 0];
       projection.rotate(r);
     } else {
