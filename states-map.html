@@ -310,7 +310,7 @@ h1,h2,p{margin:0}
     const mx = x - rect.left, my = y - rect.top;
     if (dragging){
       const dx = x - lastX, dy = y - lastY;
-      const sensitivity = 0.15;
+      const sensitivity = 0.06;
       const r = [rotation0[0] + dx*sensitivity, Math.max(-90, Math.min(90, rotation0[1] - dy*sensitivity)), 0];
       projection.rotate(r);
     } else {
