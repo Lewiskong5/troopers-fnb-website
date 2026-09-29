@@ -60,7 +60,7 @@ h1,h2,p{margin:0}
   const chipsHost = document.getElementById('stateChips');
   const hint = document.getElementById('hint');
 
-  const size = Math.min(960, window.innerWidth - 40);
+  const size = Math.min(700, window.innerWidth - 40, window.innerHeight * 0.55);
   const dpr = window.devicePixelRatio || 1;
   canvas.width = size * dpr;
   canvas.height = size * dpr;
